@@ -163,7 +163,7 @@ function flexpay_link($params)
         $htmlOutput .= '<input type="hidden" name="' . $k . '" value="' . $v . '" />';
     }
 
-    $htmlOutput .= '<input type="submit" value="Payer maintenant" />';
+    $htmlOutput .= '<input type="submit" value="Payer maintenant" style="padding: 5px 10px;font-size: 14px;background-color: #428bca;color: #fff;border-color: #357ebd;" />';
     $htmlOutput .= '</form>';
 
     return $htmlOutput;
