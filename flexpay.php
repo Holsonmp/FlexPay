@@ -57,7 +57,7 @@ function flexpay_config()
     return [
         'FriendlyName' => [
             'Type' => 'System',
-            'Value' => 'FlexPay Gateway (Visa,MasterCard,PayPal)',
+            'Value' => 'FlexPay Gateway (Mobile Money, Visa,MasterCard)',
         ],
         'merchant' => [
             'FriendlyName' => 'Merchant Code',
