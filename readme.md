@@ -2,94 +2,180 @@
 
 ## Sommaire
 
-- [Présentation](#présentation)  
-- [Configuration Requise](#configuration-requise)  
-- [Installation](#installation)  
-- [Configuration](#configuration)  
-- [Tests](#tests)  
-- [Support](#support)  
-- [Journalisation des Erreurs](#journalisation-des-erreurs)  
-- [Dépannage Courant](#dépannage-courant)
+- [Présentation](#présentation)
+- [Configuration Requise](#configuration-requise)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Utilisation](#utilisation)
+- [Tests](#tests)
+- [Sécurité](#sécurité)
+- [Support & Contact](#support--contact)
+- [FAQ & Dépannage](#faq--dépannage)
 
 ---
 
 ## Présentation
 
-Le module **FlexPay** pour **WHMCS** permet d'intégrer la passerelle de paiement FlexPay à votre système de facturation. Il supporte les moyens de paiement suivants :
+Le module **FlexPay** pour **WHMCS** est une solution de paiement complète offrant :
 
-- Visa  
-- MasterCard  
+- Support multi-devises
+- Interface responsive
+- Tableau de bord détaillé
+- Transactions sécurisées
+
+### Moyens de paiement pris en charge :
+- Visa
+- MasterCard
+- Mobile Money
 - PayPal
 
 ---
 
 ## Configuration Requise
 
-- WHMCS version **7.0** ou supérieure  
-- PHP **7.2** ou supérieur  
-- Extension PHP **cURL** activée  
-- Compte FlexPay actif avec identifiants API (Merchant Code + API Token)
+### Prérequis Techniques
+- WHMCS version **7.0** ou supérieure
+- PHP **7.2** ou supérieur
+- Extensions PHP requises :
+  - cURL
+  - PDO
+  - JSON
+- SSL/HTTPS obligatoire
+
+### Prérequis Compte
+- Compte FlexPay actif
+- Merchant Code (fourni par FlexPay)
+- API Token (généré dans votre espace FlexPay)
 
 ---
 
 ## Installation
 
-1. **Téléchargez les fichiers du module** (`flexpay.php`, `callback/flexpay.php`)
-2. **Copiez les fichiers** dans votre installation WHMCS :
+### 1. Préparation
+```bash
+mkdir -p modules/gateways/callback/
+```
 
-   - `modules/gateways/flexpay.php`
-   - `modules/gateways/callback/flexpay.php`
+### 2. Installation des Fichiers
+1. Téléchargez la dernière version depuis GitHub
+2. Copiez les fichiers :
+   ```bash
+   cp flexpay.php /chemin/vers/whmcs/modules/gateways/
+   cp callback/flexpay.php /chemin/vers/whmcs/modules/gateways/callback/
+   ```
 
-3. **Activez le module dans WHMCS** :
-
-   - Accédez à `Configuration > Paramètres système > Méthodes de paiement`
-   - Trouvez **FlexPay** dans la liste
-   - Cliquez sur **Activer**
+### 3. Activation
+1. Accédez à `Configuration > Système > Méthodes de paiement`
+2. Trouvez **FlexPay** dans la liste
+3. Cliquez sur **Activer**
 
 ---
 
 ## Configuration
 
-Dans l'interface d'administration WHMCS, configurez les paramètres suivants :
+### Paramètres Principaux
 
-| Paramètre      | Description                              |
-|----------------|------------------------------------------|
-| Merchant Code  | Votre identifiant marchand FlexPay       |
-| API Token      | Votre clé secrète JWT FlexPay            |
-| Mode Test      | Activer ou désactiver l’environnement de test |
+| Paramètre      | Description                              | Obligatoire |
+|----------------|------------------------------------------|-------------|
+| Merchant Code  | Identifiant marchand FlexPay            | Oui         |
+| API Token      | Clé secrète JWT FlexPay                 | Oui         |
+| Mode Test      | Environnement de test/production        | Non         |
+
+### Configuration Avancée
+```php
+define('FLEXPAY_DEBUG', true);    // Active les logs détaillés
+define('FLEXPAY_TIMEOUT', 30);    // Timeout des requêtes (secondes)
+```
+
+---
+
+## Utilisation
+
+### Processus de Paiement
+1. Sélection de FlexPay comme moyen de paiement
+2. Redirection vers la page sécurisée FlexPay
+3. Choix du moyen de paiement par le client
+4. Validation et retour automatique sur WHMCS
+
+### Statuts des Transactions
+- `success` : Paiement réussi
+- `pending` : En attente
+- `failed` : Échec
+- `cancelled` : Annulé
 
 ---
 
 ## Tests
 
 ### Tests Unitaires
-
-Les tests unitaires sont disponibles dans le dossier `tests`. Pour les exécuter :
-
 ```bash
-phpunit --bootstrap vendor/autoload.php tests/
+# Installation des dépendances
+composer require --dev phpunit/phpunit
 
+# Exécution des tests
+./vendor/bin/phpunit tests/FlexPayTest.php
 ```
-### Structure des Tests
 
-    - testPaymentFormGeneration()
+### Tests d'Intégration
+```bash
+./vendor/bin/phpunit tests/FlexPayIntegrationTest.php
+```
 
-    - testCallbackHandling()
+### Scénarios de Test
+- Paiement réussi
+- Paiement refusé
+- Timeout de session
+- Erreur de validation
 
-    - testInvalidCredentials()
+---
 
-### Exemples de Résultats
+## Sécurité
 
-    - Paiement accepté → statut Success
+### Recommandations
+- Utilisez toujours HTTPS
+- Validez toutes les entrées
+- Configurez les webhooks
+- Surveillez les logs régulièrement
 
-    - Paiement refusé → statut Failed
+### Validation des Transactions
+```php
+// Exemple de vérification de signature
+if (hash_equals($expectedSignature, $receivedSignature)) {
+    // Transaction valide
+}
+```
 
-    - Signature invalide → statut Error
+---
 
-## Support
+## Support & Contact
 
-    - Documentation API FlexPay : https://docs.flexpay.cd
+- **Documentation API** : [https://docs.flexpay.cd](https://docs.flexpay.cd)
+- **Support Technique** : support@flexpay.cd
+- **GitHub** : [https://github.com/holsonmp/flexpay](https://github.com/holsonmp/flexpay)
 
-    - Support technique : support@flexpay.cd
+---
 
-    - GitHub : https://github.com/holsonmp/flexpay
+## FAQ & Dépannage
+
+### Problèmes Fréquents
+
+1. **La page de paiement ne s'affiche pas**
+   - Vérifiez la configuration SSL
+   - Validez les paramètres API
+   - Consultez les logs PHP
+
+2. **Erreur de validation**
+   - Vérifiez le Merchant Code
+   - Validez l'API Token
+   - Contrôlez le format des données
+
+3. **Callback non reçu**
+   - Vérifiez l'URL de callback
+   - Contrôlez les paramètres firewall
+   - Consultez les logs système
+
+### Logs
+Les logs sont stockés dans :
+```
+/modules/gateways/flexpay/logs/
+```
